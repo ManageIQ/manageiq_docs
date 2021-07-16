@@ -1,103 +1,201 @@
 ### Assumptions:
 
-1. You have the latest installation of the ManageIQ base `>= 98cb43d08130ae...`
+1. You have the latest installation of the ManageIQ base `>= 98cb43d08130ae...`.
 
-2. Your ManageIQ base is located under `<MIQ_PATH>`
 
-### Clone IBM Cloud Plugin Repository (needed only for the ALPHA release)
+2. You have `ansible-runner` application installed in your operating system.
 
-1. Enter the plugin directory `cd <MIQ_PATH>/plugins`
+   
+3. Your ManageIQ base is located under `<MIQ_PATH>`.
 
-2. Clone IBM Cloud Plugin repository: `git clone git@github.com:iv1111/manageiq-providers-ibm_cloud.git`
+### Cloning IBM Cloud Plugin Repository (needed only for the ALPHA release)
 
-3. Checkout the image-import tag: `git checkout image_import_beta`
+1. Enter the plugin directory `cd <MIQ_PATH>/plugins`.
 
-4. Enter the "bundle.d" directory: `cd <MIQ_PATH>/bundle.d`
 
-5. Override IBM Cloud Plugin: `echo "ensure_gem 'manageiq-providers-ibm_cloud', :path => '<MIQ_PATH>/manageiq/plugins/manageiq-providers-ibm_cloud'" > overrides.rb`
+2. Clone IBM Cloud Plugin repository: `git clone git@github.com:iv1111/manageiq-providers-ibm_cloud.git`.
+
+
+3. Checkout the image-import tag: `git checkout image_import_alpha`.
+
+
+4. Enter the "bundle.d" directory: `cd <MIQ_PATH>/bundle.d`.
+
+
+5. Override IBM Cloud Plugin: `echo "ensure_gem 'manageiq-providers-ibm_cloud', :path => '<MIQ_PATH>/manageiq/plugins/manageiq-providers-ibm_cloud'" > overrides.rb`.
+
 
 6. Turn off your the rails server if it's running.
 
-6. Enter the plugin directory: `cd <MIQ_PATH>`
 
-7. Execute bundle install.
+7. Enter the plugin directory: `cd <MIQ_PATH>`.
+
+
+8. Execute `bundle install`.
+
+
+9. Start your rails server.
 
 
 ### Preparing IBM PowerVC Node:
 
-1.  Install 'python3.6', 'pip3' and 'virtualenv'.
+1.  Using package manager install `python3.6`, `pip3`, `virtualenv` and `powervc-image` applications 
     
-2.  Create sessions directory '/home/sessions' with enough storage to hold multiple disk images at once
+    as well as `libselinux-python3` library.
 
-3.  Install Python packages inside the Virtual Environment: ntpath, base64, pathlib, json, pycryptodome, ibm_boto3
 
-4.  Make 'powervc-image' cmd. application available and place valid rc file under '/opt/ibm/powervc/powervcrc'
+    
+2.  Create sessions directory `/home/sessions` with enough storage to hold GBs of transient images at once.
+
+
+3.  Create a virtual Python environment: `virtualenv --system-site-packages /home/sessions/venv`.
+
+
+4.  Activate the newly created python environment:  `source /home/sessions/venv/bin/activate`.
+
+
+5.  Install Python packages inside the Virtual Environment: `ntpath`, `base64`, `pathlib`, `pycryptodome`, `ibm_boto3`.
+
+
+6.  Exit the virtual environment by running: `deactivate`.    
+
+ 
+7.  Place valid PowerVC resource file under '`/opt/ibm/powervc/powervcrc`' with similar content:
+    
+    `export OS_IDENTITY_API_VERSION=3`
+    
+    `export OS_AUTH_URL=https://host:5000/v3/`
+    
+    `export OS_CACERT=/etc/pki/tls/certs/powervc.crt`
+    
+    `export OS_REGION_NAME=RegionOne`
+    
+    `export OS_PROJECT_DOMAIN_NAME=Default`
+    
+    `export OS_PROJECT_NAME=ibm-default`
+    
+    `export OS_TENANT_NAME=$OS_PROJECT_NAME`
+    
+    `export OS_USER_DOMAIN_NAME=Default`
+    
+    `export OS_USERNAME=root`
+    
+    `export OS_PASSWORD=password`
+    
+    `export OS_COMPUTE_API_VERSION=2.46`
+    
+    `export OS_NETWORK_API_VERSION=2.0`
+    
+    `export OS_IMAGE_API_VERSION=2`
+    
+    `export OS_VOLUME_API_VERSION=2`
+
+
+8. Before proceeding make sure to test image exporting:
+
+   * Execute `source /opt/ibm/powervc/powervcrc`.
+     
+   * Note the name of the image you want to export in the output: `powervc-image list`
+   
+   * Export the image `powervc-image export -i <image_name> -p /home/sessions/image.ova`
 
 
 ### Add a PowerVS instance
 
-1.  Add a PowerVS instance using Cloud Providers Tab in MIQ
+1.  Open PowerVS registration form using Cloud Providers Tab in ManageIQ.
 
-![Power Virtual Servers Registration Form](/images/pvs.png)
 
-2.  Initiate refreshing of the provider, wait to finish
+![PVS Registration Form Sample Screenshot](../images/pvs.png)
 
+
+2. Fill in the connection data and save the provider.
+
+
+3. Initiate the refreshing of the provider, wait for instance images to appear.
 
 
 ### Add a PowerVC instance
 
-1.  Add a PowerVC instance using Cloud Providers Tab in MIQ
+1.  Open a PowerVC registration form using Cloud Providers Tab in ManageIQ.
 
-2.  Go to Image Import Tab under the registration form
+![PVC Registration Form Sample Screenshot](../images/pvc.png)
 
-3.  Set the root password of the PowerVC node
+2. Fill in the registration data.
 
-4.  Initiate refreshing of the provider, wait to finish
+
+3.  Open `Image Import` Tab on the registration form.
+
+
+4.  Input the SSH password of the `root` user on the PowerVC node and save the provider.
+
+
+5.  Initiate the refreshing of the provider, wait for instance images to appear.
+
 
 ### Add a Cloud Object Storage
 
-1.  Add a Cloud Object Storage instance using Storage Providers Tab in MIQ
+1.  Create a new [Cloud Object Storage](https://cloud.ibm.com/objectstorage/create) instance in IBM Cloud Console.
 
-2.  Create a new bucket through IBM console or ibmcloud app, e.g. "transient-image-bucket"
 
-3.  Initiate refreshing of the provider, wait to finish
+2.  Create a new bucket through IBM console, e.g. `transient-image-bucket`.
+
+![Create a new bucket Screenshot](../images/cos_buckets.png)
+
+3.  Open a Cloud Object Storage registration form using Storage Providers Tab in ManageIQ.
+
+
+4.  Initiate the refreshing of the provider, wait for the cloud buckets to appear.
 
 ### Start the workflow
 
-1. Navigate to the newly added PVS instance 
+1. Navigate to the Power Virtual Servers provider added above.
 
-2. Click on the "Import Image" button
 
-3. Choose the newly added provider as a source for import
+2. Click on the `Import Image` button.
 
-4. Choose the image you'd like to import
 
-5. Choose cloud object storage
+3. Choose the PowerVC provider added above as a source provider for the import.
 
-6. Choose a transient bucket
 
-7. Choose target disk type for the image being imported
+4. Choose the image you would like to import.
 
-8. Decide if you want to keep transient OVA in your bucket after completion
 
-9. Submit Request
+5. Choose the Cloud Object Storage provider added above.
 
-10. You can see the progress in MIQ UI -> Settings -> Tasks -> All Tasks -> Running
 
-11. Submit Inventory Refresh for all newly added providers upon completion
+6. Choose the transient bucket created above.
+
+
+7. Choose target disk type for the image being imported.
+
+
+8. Decide if you want to keep transient OVA file in your bucket upon completion.
+
+
+9. Submit the Image Import Request (it might take an hour or more depending on the image size).
+
+
+10. You can see current progress in `ManageIQ -> Settings -> Tasks -> All Tasks -> Running`.
+
+
+11.  Initiate the refreshing of the Power Virtual Servers provider, wait for the newly imported image to appear.
 
 
 ### Provision an instance
 
-1. Navigate to PVS provider
+1. Navigate to Power Virtual Servers provider.
 
-2. Go to Images View and find the new image
 
-3. Click on "Lifecycle -> Provision ..."
+2. Go to Images View and click on the newly imported image.
 
-4. Follow instructions on doc. page: [reference]
 
-5. Once the server is provisioned use SSH for connection
+3. Click on "`Lifecycle -> Provision Instances Using this Image`"
 
-6. Do cat /etc/*rel* to see the release informaiton of the OS
 
+4. Choose the server name and set all other values as desired. 
+
+
+5. Submit the provisioning workflow and wait for it to finish.
+
+
+6. Connect to the newly provisioned server e.g. via SSH.

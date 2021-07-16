@@ -43,8 +43,6 @@
     
     as well as `libselinux-python3` library.
 
-
-    
 2.  Create sessions directory `/home/sessions` with enough storage to hold GBs of transient images at once.
 
 
@@ -137,14 +135,31 @@
 1.  Create a new [Cloud Object Storage](https://cloud.ibm.com/objectstorage/create) instance in IBM Cloud Console.
 
 
-2.  Create a new bucket through IBM console, e.g. `transient-image-bucket`.
+2.  Navigate to `Service Credentials -> New Credential`, choose the `Manager` role and 
+
+    enable `Include HMAC Credential` option when generating the credentials.
+
+
+3. Navigate to `Manage -> Access (IAM) -> Service IDs` and choose your newly created key. 
+
+
+4. Navigate to `Access Policies -> Assign Access -> IAM Service -> Cloud Object Storage`.
+
+
+5. Select `Writer` checkbox under `Service Access` group and press `Add`.
+
+![Access Policy Screenshot](../images/cos_access.png)
+
+6. Create a new bucket through IBM console, e.g. `transient-image-bucket`.
+
 
 ![Create a new bucket Screenshot](../images/cos_buckets.png)
 
-3.  Open a Cloud Object Storage registration form using Storage Providers Tab in ManageIQ.
+7.  Open a Cloud Object Storage registration form using Storage Providers Tab in ManageIQ.
 
 
-4.  Initiate the refreshing of the provider, wait for the cloud buckets to appear.
+
+8.  Initiate the refreshing of the provider, wait for the cloud buckets to appear.
 
 ### Start the workflow
 

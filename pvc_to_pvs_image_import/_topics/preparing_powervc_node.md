@@ -25,7 +25,7 @@
 5. Override IBM Cloud Plugin: `echo "ensure_gem 'manageiq-providers-ibm_cloud', :path => '<MIQ_PATH>/manageiq/plugins/manageiq-providers-ibm_cloud'" > overrides.rb`.
 
 
-6. Turn off your the rails server if it's running.
+6. Turn off your rails server if it's running.
 
 
 7. Enter the plugin directory: `cd <MIQ_PATH>`.
@@ -43,6 +43,7 @@
     
     as well as `libselinux-python3` library.
 
+
 2.  Create sessions directory `/home/sessions` with enough storage to hold GBs of transient images at once.
 
 
@@ -52,7 +53,7 @@
 4.  Activate the newly created python environment:  `source /home/sessions/venv/bin/activate`.
 
 
-5.  Install Python packages inside the Virtual Environment: `ntpath`, `base64`, `pathlib`, `pycryptodome`, `ibm_boto3`.
+5.  Install Python packages inside the Virtual Environment using: `pip3 install ntpath base64 pathlib pycryptodome ibm_boto3`.
 
 
 6.  Exit the virtual environment by running: `deactivate`.    
@@ -100,7 +101,7 @@
 
 ### Add a PowerVS instance
 
-1.  Open PowerVS registration form using Cloud Providers Tab in ManageIQ.
+1.  Open PowerVS registration form using `Cloud Providers` Tab in ManageIQ.
 
 
 ![PVS Registration Form Sample Screenshot](../images/pvs.png)
@@ -114,7 +115,7 @@
 
 ### Add a PowerVC instance
 
-1.  Open a PowerVC registration form using Cloud Providers Tab in ManageIQ.
+1.  Open PowerVC registration form using `Cloud Providers` Tab in ManageIQ.
 
 ![PVC Registration Form Sample Screenshot](../images/pvc.png)
 
@@ -132,7 +133,7 @@
 
 ### Add a Cloud Object Storage
 
-1.  Create a new [Cloud Object Storage](https://cloud.ibm.com/objectstorage/create) instance in IBM Cloud Console.
+1.  Create new [Cloud Object Storage](https://cloud.ibm.com/objectstorage/create) instance in IBM Cloud Console.
 
 
 2.  Navigate to `Service Credentials -> New Credential`, choose the `Manager` role and 
@@ -155,7 +156,7 @@
 
 ![Create a new bucket Screenshot](../images/cos_buckets.png)
 
-7.  Open a Cloud Object Storage registration form using Storage Providers Tab in ManageIQ.
+7.  Open Cloud Object Storage registration form using `Storage Providers` Tab in ManageIQ.
 
 
 
@@ -194,10 +195,12 @@
 ![Workflow Form Screenshot](../images/workflow.png)
 
 
-10. You can see current progress in `ManageIQ -> Settings -> Tasks -> All Tasks -> Running`.
+10. You can see current progress in `ManageIQ -> Settings -> Tasks -> All Tasks`.
 
 
-11.  Initiate the refreshing of the Power Virtual Servers provider, wait for the newly imported image to appear.
+11.  Initiate the refreshing of the Power Virtual Servers provider upon workflow completion, 
+     
+     wait for the newly imported image to appear.
 
 
 ### Provision an instance

@@ -153,6 +153,8 @@
 
 2. Click on the `Import Image` button.
 
+![Import Image Button Screenshot](../images/import_button.png)
+
 
 3. Choose the PowerVC provider added above as a source provider for the import.
 
@@ -173,6 +175,8 @@
 
 
 9. Submit the Image Import Request (it might take an hour or more depending on the image size).
+
+![Workflow Form Screenshot](../images/workflow.png)
 
 
 10. You can see current progress in `ManageIQ -> Settings -> Tasks -> All Tasks -> Running`.
